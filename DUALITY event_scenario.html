@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DUALITY — Концепция мероприятия</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Unbounded:wght@200;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C0392B;
+    --blue: #1A5276;
+    --gold: #B7950B;
+    --light-bg: #F5F0E8;
+    --dark-bg: #0D0D0D;
+    --dark-surface: #141414;
+    --dark-card: #1A1A1A;
+    --text-light: #E8E0D0;
+    --text-muted: #8A8070;
+    --accent-red: #E74C3C;
+    --accent-blue: #2E86C1;
+    --border-dark: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark-bg);
+    color: var(--text-light);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 4rem 2rem;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 40% at 20% 50%, rgba(192,57,43,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 50%, rgba(26,82,118,0.12) 0%, transparent 60%);
+  }
+
+  .cover-divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.15) 80%, transparent);
+  }
+
+  .pill-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+  }
+
+  h1.cover-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: clamp(4rem, 12vw, 9rem);
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  h1.cover-title .red { color: var(--accent-red); }
+  h1.cover-title .slash { color: rgba(255,255,255,0.15); font-weight: 200; }
+  h1.cover-title .blue { color: var(--accent-blue); }
+
+  .cover-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .cover-meta {
+    display: flex;
+    gap: 3rem;
+    margin-top: 3rem;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+  /* === CONTENT === */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  .section {
+    margin-bottom: 6rem;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  h2.section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 400;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    border-bottom: 0.5px solid var(--border-dark);
+    padding-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 400;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  p, li { 
+    color: #B0A898; 
+    line-height: 1.85;
+    margin-bottom: 0.75rem;
+  }
+
+  p strong { color: var(--text-light); font-weight: 500; }
+
+  /* === ZONE CARDS === */
+  .zones-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border-dark);
+    border: 0.5px solid var(--border-dark);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .zone-card {
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .zone-card.light {
+    background: #F7F2E8;
+    color: #2C2416;
+  }
+  .zone-card.light .zone-name { color: #C0392B; }
+  .zone-card.light p, .zone-card.light li { color: #5A5040; }
+  .zone-card.light h3 { color: #2C2416; }
+  .zone-card.light .zone-label { color: #8A7055; }
+
+  .zone-card.dark {
+    background: var(--dark-card);
+    color: var(--text-light);
+  }
+  .zone-card.dark .zone-name { color: var(--accent-blue); }
+  .zone-card.dark .zone-label { color: var(--text-muted); }
+
+  .zone-name {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .zone-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .zone-features { list-style: none; }
+  .zone-features li {
+    padding: 0.4rem 0;
+    padding-left: 1rem;
+    position: relative;
+    font-size: 12px;
+    margin-bottom: 0;
+  }
+  .zone-features li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    opacity: 0.4;
+  }
+
+  /* === TIMELINE === */
+  .timeline {
+    position: relative;
+    padding-left: 3rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-dark);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -2.4rem;
+    top: 0.3rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid;
+  }
+
+  .timeline-dot.event-main { border-color: var(--accent-red); background: var(--accent-red); }
+  .timeline-dot.event-concert { border-color: var(--gold); background: var(--gold); }
+  .timeline-dot.event-dark { border-color: var(--accent-blue); background: transparent; }
+  .timeline-dot.event-both { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); }
+
+  .timeline-time {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .timeline-desc {
+    font-size: 12px;
+    color: #7A7268;
+    line-height: 1.7;
+    margin-bottom: 0;
+  }
+
+  .timeline-zone-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 0.4rem;
+  }
+  .badge-light { background: rgba(192,57,43,0.12); color: var(--accent-red); }
+  .badge-dark  { background: rgba(46,134,193,0.12); color: var(--accent-blue); }
+  .badge-both  { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+
+  /* === ACTIVITIES GRID === */
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .activity-card {
+    background: var(--dark-card);
+    border: 0.5px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 1.75rem;
+    transition: border-color 0.2s;
+  }
+
+  .activity-card:hover { border-color: rgba(255,255,255,0.15); }
+
+  .activity-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .activity-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 400;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+
+  .activity-desc {
+    font-size: 12px;
+    color: #7A7268;
+    line-height: 1.7;
+    margin-bottom: 0;
+  }
+
+  .activity-tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 0.75rem;
+    background: rgba(46,134,193,0.1);
+    color: #5BA3C9;
+  }
+  .tag-ai { background: rgba(150,100,200,0.1); color: #C39BEB; }
+  .tag-social { background: rgba(46,134,193,0.1); color: #5BA3C9; }
+  .tag-creative { background: rgba(183,149,11,0.1); color: #D4AC0D; }
+  .tag-game { background: rgba(46,184,92,0.1); color: #52BE80; }
+  .tag-immersive { background: rgba(192,57,43,0.1); color: #E74C3C; }
+
+  /* === LASER / TECH SECTION === */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tech-card {
+    background: var(--dark-card);
+    border: 0.5px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 1.75rem;
+  }
+
+  .tech-name {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .tech-type {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .tech-desc {
+    font-size: 12px;
+    color: #7A7268;
+    line-height: 1.7;
+    margin-bottom: 0;
+  }
+
+  /* === FLOOR PLAN === */
+  .floorplan-wrapper {
+    background: var(--dark-card);
+    border: 0.5px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  svg.floorplan text { font-family: 'JetBrains Mono', monospace; }
+
+  /* === MATRIX QUOTE === */
+  .matrix-quote {
+    border-left: 2px solid var(--accent-blue);
+    padding: 1.5rem 2rem;
+    margin: 2.5rem 0;
+    background: rgba(46,134,193,0.04);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .matrix-quote blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--text-light);
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .matrix-quote cite {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* === DIVIDER === */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 4rem 0;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--border-dark);
+  }
+  .section-divider span {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* === CONCEPT PILLARS === */
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border-dark);
+    border: 0.5px solid var(--border-dark);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .pillar {
+    background: var(--dark-card);
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .pillar-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    opacity: 0.7;
+  }
+
+  .pillar-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 400;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .pillar-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .zones-grid { grid-template-columns: 1fr; }
+    .pillars-grid { grid-template-columns: 1fr; }
+    h1.cover-title { font-size: 3.5rem; }
+    .cover-meta { flex-direction: column; gap: 0.5rem; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-divider"></div>
+  <div class="pill-tag">Концепция корпоративного мероприятия · Москва</div>
+  <h1 class="cover-title">
+    <span class="red">DUAL</span><span class="slash">/</span><span class="blue">ITY</span>
+  </h1>
+  <p class="cover-subtitle">«Выбери свою реальность»</p>
+  <div class="cover-meta">
+    <span>Длительность: 5–6 часов</span>
+    <span>Две зоны · Один мир</span>
+    <span>Красная таблетка или синяя?</span>
+  </div>
+  <div class="scroll-hint">↓ scroll</div>
+</section>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- КОНЦЕПЦИЯ -->
+  <section class="section">
+    <div class="section-label">01 · Концепция</div>
+    <h2 class="section-title">Большая идея</h2>
+
+    <div class="pillars-grid">
+      <div class="pillar">
+        <span class="pillar-icon">⬤</span>
+        <div class="pillar-title">Два мира</div>
+        <p class="pillar-sub">Светлое и тёмное. Публичное и приватное. Сцена и тень.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">◈</span>
+        <div class="pillar-title">Свободный выбор</div>
+        <p class="pillar-sub">Каждый гость сам решает, кем быть этим вечером.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">◐</span>
+        <div class="pillar-title">Погружение</div>
+        <p class="pillar-sub">Пространство — не декорация. Пространство — сюжет.</p>
+      </div>
+    </div>
+
+    <p>Мероприятие построено на метафоре из культового фильма «Матрица»: каждый гость с порога принимает решение — красная таблетка или синяя. Это не просто тематическое оформление. Это <strong>архитектурная и нарративная развилка</strong>, которая определяет весь вечер.</p>
+
+    <p>Два входа — два потока — два опыта. При этом обе зоны связаны единым событием: фуршетный стол на границе, общая музыка, общий смысл. Гости могут мигрировать, но каждая зона сохраняет свою атмосферу.</p>
+
+    <div class="matrix-quote">
+      <blockquote>«Ты принимаешь синюю таблетку — история заканчивается, ты просыпаешься в своей постели и веришь, во что хочешь. Ты принимаешь красную таблетку — остаёшься в Стране чудес, и я покажу тебе, насколько глубока кроличья нора.»</blockquote>
+      <cite>— Морфеус, «Матрица» (1999)</cite>
+    </div>
+  </section>
+
+  <div class="section-divider"><span>зоны</span></div>
+
+  <!-- ЗОНЫ -->
+  <section class="section">
+    <div class="section-label">02 · Пространство</div>
+    <h2 class="section-title">Светлая и Тёмная зоны</h2>
+
+    <div class="zones-grid">
+      <div class="zone-card light">
+        <div class="zone-name">LIGHT</div>
+        <span class="zone-label">Красная таблетка · Правда · Сцена</span>
+        <ul class="zone-features">
+          <li>Белый/тёплый свет, высокая освещённость</li>
+          <li>Сцена для выступлений и докладов</li>
+          <li>Зона фотосессии (branded backdrop)</li>
+          <li>Фуршетный стол — барьер между мирами</li>
+          <li>Круглые столики для общения</li>
+          <li>Лазерное/проекционное шоу на стенах</li>
+          <li>Подвесные фермы с динамическим светом</li>
+          <li>Экраны для трансляции докладов</li>
+        </ul>
+      </div>
+      <div class="zone-card dark">
+        <div class="zone-name">DARK</div>
+        <span class="zone-label">Синяя таблетка · Иллюзия · Тень</span>
+        <ul class="zone-features">
+          <li>Почти полная темнота, точечный синий свет</li>
+          <li>Нитевые шторы — ширмы-лабиринт</li>
+          <li>Digital Rain / Matrix Code на всех поверхностях</li>
+          <li>Приватные закутки за ширмами</li>
+          <li>Высокие столики — зоны случайных встреч</li>
+          <li>AI-терминалы и интерактивные инсталляции</li>
+          <li>Тихий ambient/electronic саундтрек</li>
+          <li>Барная стойка (smoke-коктейли, dry ice)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SVG ПЛАН ЗАЛА -->
+    <div class="floorplan-wrapper" style="background:#F0ECE4; border-color: rgba(0,0,0,0.1);">
+      <div class="section-label" style="margin-bottom:1rem; color:#7A7060;">Схема зала (концептуальная)</div>
+      <svg viewBox="0 0 900 500" width="100%" xmlns="http://www.w3.org/2000/svg" class="floorplan">
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="900" height="500" fill="url(#grid)" rx="4"/>
+
+        <!-- LIGHT ZONE background -->
+        <rect x="10" y="10" width="418" height="470" rx="6" fill="rgba(255,240,235,0.7)" stroke="#C0392B" stroke-width="1.2"/>
+        <text x="219" y="34" text-anchor="middle" font-size="13" fill="#C0392B" letter-spacing="3" font-weight="600" font-family="JetBrains Mono, monospace">СВЕТЛАЯ ЗОНА</text>
+
+        <!-- Stage -->
+        <rect x="18" y="55" width="78" height="408" rx="4" fill="rgba(231,76,60,0.12)" stroke="#C0392B" stroke-width="1"/>
+        <text x="57" y="264" text-anchor="middle" font-size="13" fill="#C0392B" font-weight="600" transform="rotate(-90,57,264)" letter-spacing="2" font-family="JetBrains Mono, monospace">СЦЕНА</text>
+
+        <!-- Photo wall -->
+        <rect x="108" y="55" width="306" height="34" rx="3" fill="rgba(231,76,60,0.1)" stroke="#C0392B" stroke-width="0.8"/>
+        <text x="261" y="76" text-anchor="middle" font-size="12" fill="#9B2335" letter-spacing="1" font-family="JetBrains Mono, monospace">СТЕНА ДЛЯ ФОТОСЕССИЙ</text>
+
+        <!-- Tables light zone — 2 columns × 4 rows -->
+        <g transform="translate(126,105)">
+          <rect x="0"  y="0"   width="34" height="34" rx="17" fill="rgba(192,57,43,0.18)" stroke="#C0392B" stroke-width="1"/>
+          <rect x="54" y="0"   width="34" height="34" rx="17" fill="rgba(192,57,43,0.18)" stroke="#C0392B" stroke-width="1"/>
+          <rect x="0"  y="54"  width="34" height="34" rx="17" fill="rgba(192,57,43,0.18)" stroke="#C0392B" stroke-width="1"/>
+          <rect x="54" y="54"  width="34" height="34" rx="17" fill="rgba(192,57,43,0.18)" stroke="#C0392B" stroke-width="1"/>
+          <rect x="0"  y="108" width="34" height="34" rx="17" fill="rgba(192,57,43,0.18)" stroke="#C0392B" stroke-width="1"/>
+          <rect x="54" y="108" width="34" height="34" rx="17" fill="rgba(192,57,43,0.18)" stroke="#C0392B" stroke-width="1"/>
+          <rect x="0"  y="162" width="34" height="34" rx="17" fill="rgba(192,57,43,0.18)" stroke="#C0392B" stroke-width="1"/>
+          <rect x="54" y="162" width="34" height="34" rx="17" fill="rgba(192,57,43,0.18)" stroke="#C0392B" stroke-width="1"/>
+        </g>
+        <text x="183" y="316" text-anchor="middle" font-size="11" fill="#8B5A4A" letter-spacing="1" font-family="JetBrains Mono, monospace">СТОЛИКИ</text>
+
+        <!-- Truss -->
+        <rect x="108" y="440" width="306" height="24" rx="3" fill="rgba(183,149,11,0.18)" stroke="#9A7D0A" stroke-width="0.8"/>
+        <text x="261" y="456" text-anchor="middle" font-size="11" fill="#7A6008" letter-spacing="1" font-family="JetBrains Mono, monospace">ФЕРМА ОСВЕЩЕНИЯ</text>
+
+        <!-- BUFFET / BORDER -->
+        <rect x="428" y="55" width="26" height="400" rx="3" fill="rgba(183,149,11,0.25)" stroke="#9A7D0A" stroke-width="1.2"/>
+        <text x="441" y="258" text-anchor="middle" font-size="11" fill="#7A6008" font-weight="600" transform="rotate(-90,441,258)" letter-spacing="2" font-family="JetBrains Mono, monospace">ФУРШЕТНЫЙ СТОЛ</text>
+
+        <!-- DARK ZONE background -->
+        <rect x="456" y="10" width="434" height="470" rx="6" fill="rgba(220,235,250,0.55)" stroke="#1A5276" stroke-width="1.2"/>
+        <text x="673" y="34" text-anchor="middle" font-size="13" fill="#1A5276" letter-spacing="3" font-weight="600" font-family="JetBrains Mono, monospace">ТЁМНАЯ ЗОНА</text>
+
+        <!-- Projection strip top -->
+        <rect x="460" y="55" width="426" height="36" rx="3" fill="rgba(46,134,193,0.12)" stroke="#2E86C1" stroke-width="0.8"/>
+        <text x="673" y="77" text-anchor="middle" font-size="11" fill="#1A5276" letter-spacing="1" font-family="JetBrains Mono, monospace">ПРОЕКЦИЯ MATRIX CODE</text>
+
+        <!-- Side screen / wall -->
+        <rect x="856" y="100" width="28" height="290" rx="3" fill="rgba(46,134,193,0.12)" stroke="#2E86C1" stroke-width="0.8"/>
+
+        <!-- Shirma lines -->
+        <line x1="575" y1="108" x2="610" y2="320" stroke="#2E86C1" stroke-width="1.5" stroke-dasharray="6,4"/>
+        <line x1="700" y1="108" x2="735" y2="320" stroke="#2E86C1" stroke-width="1.5" stroke-dasharray="6,4"/>
+        <text x="655" y="215" text-anchor="middle" font-size="12" fill="#1A5276" letter-spacing="1" font-family="JetBrains Mono, monospace">ШИРМЫ</text>
+
+        <!-- Tables dark zone — 3 cols × 2 rows -->
+        <g transform="translate(468,105)">
+          <rect x="0"  y="0"  width="28" height="28" rx="14" fill="rgba(26,82,118,0.18)" stroke="#1A5276" stroke-width="1"/>
+          <rect x="44" y="0"  width="28" height="28" rx="14" fill="rgba(26,82,118,0.18)" stroke="#1A5276" stroke-width="1"/>
+          <rect x="88" y="0"  width="28" height="28" rx="14" fill="rgba(26,82,118,0.18)" stroke="#1A5276" stroke-width="1"/>
+          <rect x="0"  y="44" width="28" height="28" rx="14" fill="rgba(26,82,118,0.18)" stroke="#1A5276" stroke-width="1"/>
+          <rect x="44" y="44" width="28" height="28" rx="14" fill="rgba(26,82,118,0.18)" stroke="#1A5276" stroke-width="1"/>
+          <rect x="88" y="44" width="28" height="28" rx="14" fill="rgba(26,82,118,0.18)" stroke="#1A5276" stroke-width="1"/>
+        </g>
+        <text x="540" y="196" text-anchor="middle" font-size="11" fill="#1A5276" letter-spacing="1" font-family="JetBrains Mono, monospace">СТОЛИКИ</text>
+
+        <!-- AI terminal -->
+        <rect x="755" y="195" width="88" height="58" rx="4" fill="rgba(120,60,200,0.12)" stroke="#7B3FA0" stroke-width="1"/>
+        <text x="799" y="220" text-anchor="middle" font-size="12" fill="#5B2C8A" font-weight="600" letter-spacing="1" font-family="JetBrains Mono, monospace">AI</text>
+        <text x="799" y="237" text-anchor="middle" font-size="10" fill="#5B2C8A" letter-spacing="1" font-family="JetBrains Mono, monospace">ТЕРМИНАЛ</text>
+
+        <!-- Bar dark zone -->
+        <rect x="755" y="325" width="88" height="46" rx="4" fill="rgba(26,184,92,0.12)" stroke="#1A7A40" stroke-width="1"/>
+        <text x="799" y="352" text-anchor="middle" font-size="12" fill="#1A5C32" font-weight="600" letter-spacing="1" font-family="JetBrains Mono, monospace">БАРМЕН</text>
+
+        <!-- ENTRANCES -->
+        <rect x="376" y="457" width="60" height="22" rx="4" fill="rgba(192,57,43,0.25)" stroke="#C0392B" stroke-width="1.2"/>
+        <text x="406" y="472" text-anchor="middle" font-size="11" fill="#7B1010" font-weight="600" font-family="JetBrains Mono, monospace">ВХОД ●</text>
+        <text x="406" y="491" text-anchor="middle" font-size="10" fill="#9B2335" letter-spacing="1" font-family="JetBrains Mono, monospace">КРАСНЫЙ</text>
+
+        <rect x="458" y="457" width="60" height="22" rx="4" fill="rgba(26,82,118,0.25)" stroke="#1A5276" stroke-width="1.2"/>
+        <text x="488" y="472" text-anchor="middle" font-size="11" fill="#102A44" font-weight="600" font-family="JetBrains Mono, monospace">● ВХОД</text>
+        <text x="488" y="491" text-anchor="middle" font-size="10" fill="#1A5276" letter-spacing="1" font-family="JetBrains Mono, monospace">СИНИЙ</text>
+      </svg>
+    </div>
+
+    <p><strong>Граница между зонами:</strong> фуршетный стол + нитевые шторы по бокам и сверху. Со стороны Тёмной зоны на этот занавес проецируется Digital Rain. Перейти из одной зоны в другую можно свободно — но каждый переход ощущается как осознанный шаг.</p>
+  </section>
+
+  <div class="section-divider"><span>программа</span></div>
+
+  <!-- ТАЙМИНГ -->
+  <section class="section">
+    <div class="section-label">03 · Тайминг</div>
+    <h2 class="section-title">Сценарий вечера</h2>
+
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-dot event-both"></div>
+        <div class="timeline-time">18:00 – 18:30</div>
+        <div class="timeline-zone-badge badge-both">Оба входа открыты</div>
+        <div class="timeline-title">Регистрация и встреча гостей</div>
+        <p class="timeline-desc">Гостей встречают у двух входов. У красного входа — хостес в белом, подсветка тёплым красным. У синего — в тёмном, холодный синий неон. Каждому гостю выдаётся именной бейдж с QR-кодом и маленькая капсула с «таблеткой» (конфета в виде таблетки в соответствующем цвете). Ambient DJ-сет с trip-hop / downtempo — одинаково звучит в обеих зонах через систему зонального звука.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot event-both"></div>
+        <div class="timeline-time">18:30 – 18:45</div>
+        <div class="timeline-zone-badge badge-both">Все гости в зале</div>
+        <div class="timeline-title">Открытие. Перформанс «Пробуждение»</div>
+        <p class="timeline-desc">Свет гаснет полностью. 90 секунд — только Digital Rain на всех поверхностях, пульс электроники, нарастающий низкий бас. Затем взрыв света: Светлая зона залита белым, Тёмная остаётся синей. На сцене появляется ведущий с репликой Морфеуса. Краткое объяснение концепции двух зон — и вечер официально стартует.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot event-main"></div>
+        <div class="timeline-time">18:45 – 20:00</div>
+        <div class="timeline-zone-badge badge-light">Светлая зона · Сцена</div>
+        <div class="timeline-title">Официальная часть: выступления / доклады / награждения</div>
+        <p class="timeline-desc">Формальная программа идёт в Светлой зоне. Ведущий, спикеры, слайды на экранах. На фоне — медленная лазерная анимация (не отвлекает, но создаёт глубину). Трансляция на LED-экраны в Тёмной зоне с субтитрами: кто хочет — может наблюдать краем глаза. В Тёмной зоне в это время работает тихий ambient-фон и открыты все интерактивные активации. Бармен приступает к работе.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot event-both"></div>
+        <div class="timeline-time">20:00 – 20:30</div>
+        <div class="timeline-zone-badge badge-both">Фуршет · Обе зоны</div>
+        <div class="timeline-title">Фуршет и свободное общение</div>
+        <p class="timeline-desc">Переходный момент — самый живой. Фуршетный стол на границе зон становится точкой встречи «красных» и «синих». Гости смешиваются, завязываются разговоры. Лёгкая музыка, бармен с авторскими коктейлями (Red Pill / Blue Pill — два фирменных напитка, алкогольный и безалкогольный). Интерактивные активации в Тёмной зоне достигают пика — очереди к AI-терминалам.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot event-concert"></div>
+        <div class="timeline-time">20:30 – 21:30</div>
+        <div class="timeline-zone-badge badge-light">Светлая зона · Сцена</div>
+        <div class="timeline-title">Концертная часть</div>
+        <p class="timeline-desc">Выступление артиста / группы / оркестра. Параллельно — кульминация иммерсивного лазерного шоу: лучи прорезают обе зоны, нитевые шторы превращаются в экраны. Рекомендуется: электронный исполнитель с живыми элементами (электроскрипка, саксофон + электроника), небольшой джазовый ансамбль в стиле nu-jazz, либо DJ-set с визуализацией. В Тёмной зоне звук чуть тише — можно говорить, не перекрикивая музыку.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot event-dark"></div>
+        <div class="timeline-time">21:30 – 22:30</div>
+        <div class="timeline-zone-badge badge-dark">Тёмная зона · Afterparty</div>
+        <div class="timeline-title">Тёмный послесловие / неформальный финал</div>
+        <p class="timeline-desc">Светлая зона постепенно «угасает» — свет снижается, сцена отключается. Тёмная зона принимает всех желающих продолжить вечер. DJ ambient/electronic. Барная стойка. AI-инсталляции работают в режиме «ночного клуба». Тем, кто хочет уйти — прощание у красного выхода с фирменными сувенирами.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"><span>активации</span></div>
+
+  <!-- ТЁМНАЯ ЗОНА: АКТИВАЦИИ -->
+  <section class="section">
+    <div class="section-label">04 · Тёмная зона — активации</div>
+    <h2 class="section-title">Чем заняться интровертам: 8 активностей без ведущих</h2>
+
+    <p style="margin-bottom:2rem;">Все активности работают самостоятельно, не требуют аниматоров, можно включиться в любой момент и уйти когда угодно.</p>
+
+    <div class="activities-grid">
+
+      <div class="activity-card">
+        <span class="activity-num">01</span>
+        <div class="activity-title">AI-Оракул «Красная таблетка»</div>
+        <p class="activity-desc">Стойка-терминал с планшетом или большим экраном. Гость вводит вопрос — любой, личный, профессиональный, философский. Claude / GPT отвечает в стиле Морфеуса: метафорично, глубоко, без банальностей. Промпт настроен на компанию-организатора: AI знает её историю, ценности, ключевые события года. Ответы можно распечатать на небольшом принтере как «пророчество».</p>
+        <span class="activity-tag tag-ai">AI · Claude API</span>
+      </div>
+
+      <div class="activity-card">
+        <span class="activity-num">02</span>
+        <div class="activity-title">Анонимная исповедальня</div>
+        <p class="activity-desc">QR-код на столиках → телеграм-бот или веб-форма. Гость анонимно пишет: «Что я хочу сказать компании, но никогда не скажу вслух?» Сообщения агрегируются и в реальном времени появляются на проекции в Тёмной зоне в виде облака слов или бегущей строки. Модерация автоматическая (AI-фильтр). Это создаёт ощущение коллективного голоса.</p>
+        <span class="activity-tag tag-ai">AI · анонимность</span>
+      </div>
+
+      <div class="activity-card">
+        <span class="activity-num">03</span>
+        <div class="activity-title">Нейро-портрет</div>
+        <p class="activity-desc">Камера с AI-фильтром (Stable Diffusion / RunwayML) трансформирует фото гостя в стиле «Матрица»: зелёный код на лице, киберпанк-эстетика, или в духе арта Syd Mead. Не Instagram-фильтр, а полноценная генерация. Результат приходит на телефон через 2–3 минуты. Можно поставить как арт-инсталляцию с большим экраном, где результаты появляются публично.</p>
+        <span class="activity-tag tag-ai">AI-генерация · фото</span>
+      </div>
+
+      <div class="activity-card">
+        <span class="activity-num">04</span>
+        <div class="activity-title">«Матрица знакомств»</div>
+        <p class="activity-desc">Приложение-матчмейкер на основе анкеты при регистрации (5 вопросов: интересы, роль в компании, чего ищешь на мероприятии). AI подбирает трёх людей, с которыми стоит познакомиться именно сегодня, и присылает в мессенджер с краткой «легендой»: почему вам есть о чём поговорить. Для интровертов это снимает барьер холодного знакомства.</p>
+        <span class="activity-tag tag-social">AI-матчмейкинг</span>
+      </div>
+
+      <div class="activity-card">
+        <span class="activity-num">05</span>
+        <div class="activity-title">Детектив в конвертах</div>
+        <p class="activity-desc">На столиках лежат запечатанные конверты с детективной историей, связанной с компанией (вымышленная, юмористическая). Один «виновный» среди гостей — его имя и роль зашиты в сюжет. Гости собирают улики самостоятельно: карточки, зашифрованные QR-коды, подсказки в приложении. Финал детектива объявляется в 21:00 со сцены. Не требует ведущего — только стартовый пакет материалов.</p>
+        <span class="activity-tag tag-game">Игра · детектив</span>
+      </div>
+
+      <div class="activity-card">
+        <span class="activity-num">06</span>
+        <div class="activity-title">Стена предсказаний</div>
+        <p class="activity-desc">Большая чёрная доска / магнитная стена с маркерами. Гости пишут предсказание — для компании, для индустрии, лично для себя — на следующий год. Фотографируют. Через год компания публично проверяет, что сбылось. Простая, медленная, но невероятно вовлекающая активность. Никакого AI, только руки и мысли.</p>
+        <span class="activity-tag tag-creative">Аналоговая · рефлексия</span>
+      </div>
+
+      <div class="activity-card">
+        <span class="activity-num">07</span>
+        <div class="activity-title">Аудио-исповедальня «Голос из темноты»</div>
+        <p class="activity-desc">Звукоизолированная кабинка (или просто ниша за ширмой) с микрофоном. Гость записывает 30-секундное аудио: история, воспоминание, пожелание. Записи анонимны. Случайные фрагменты проигрываются через динамики Тёмной зоны тихим фоном в течение вечера — голоса людей, которые здесь, сейчас, рядом. Создаёт странный, трогательный эффект присутствия.</p>
+        <span class="activity-tag tag-immersive">Аудио · иммерсив</span>
+      </div>
+
+      <div class="activity-card">
+        <span class="activity-num">08</span>
+        <div class="activity-title">AI-бармен «Декодер»</div>
+        <p class="activity-desc">Планшет у барной стойки. Гость описывает своё настроение, вкусы, или просто вводит случайное слово. AI (Claude) формулирует авторский коктейль с названием, описанием и рецептом — специально под этого гостя. Бармен готовит по рецепту. У каждого гостя — уникальный напиток с именной карточкой. Репликабельная, беспроигрышная идея для Instagram.</p>
+        <span class="activity-tag tag-ai">AI · бармен · персонализация</span>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"><span>шоу</span></div>
+
+  <!-- ЛАЗЕРНОЕ ШОУ -->
+  <section class="section">
+    <div class="section-label">05 · Иммерсивное шоу</div>
+    <h2 class="section-title">Лазерное шоу с интерактивом — варианты в Москве</h2>
+
+    <p style="margin-bottom:2rem;">Ниже — проверенные форматы и компании, работающие в Москве. Все варианты поддерживают кастомный контент под тематику «Матрица / Duality».</p>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-name">Laser Art Show (лазер + проекция mapping)</div>
+        <span class="tech-type">Классический иммерсив · 360°</span>
+        <p class="tech-desc">Мощные KVANT/IPG лазерные проекторы расставляются по периметру. Контент — анимированный Matrix Code, геометрические паттерны, брендированные элементы. При добавлении тумановых машин (hazer) лазерные лучи становятся объёмными и «осязаемыми». Московские подрядчики: LaserShow Moscow, Laserart, BrightLine Events. Стоимость от 200–400 тыс. руб. за вечер.</p>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">Интерактивный лазер Kinect/LiDAR</div>
+        <span class="tech-type">Интерактив · движение тела</span>
+        <p class="tech-desc">Сенсоры LiDAR или Kinect фиксируют движения гостей. Лазерные лучи или проекция «реагируют» на положение тела — человек буквально становится дирижёром шоу. Один или несколько человек могут управлять визуальным полем одновременно. Особенно эффектно в Тёмной зоне. Требует калибровки площадки. Подрядчики: Sila Sveta (Москва), AV Production.</p>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">Holographic Fan Display</div>
+        <span class="tech-type">Голографика · точечные акценты</span>
+        <p class="tech-desc">LED-вентиляторы создают «плавающие» 3D-объекты в пространстве — логотип компании, цифры, символы из Matrix, визуальные эффекты. Не требуют специального затемнения. Устанавливаются над фуршетным столом, над барной стойкой, в нишах. Эффект максимальный при первом визуальном контакте. Аренда от 15–30 тыс. руб. за устройство.</p>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">AI-генеративная визуализация (TouchDesigner)</div>
+        <span class="tech-type">Real-time AI · процедурная графика</span>
+        <p class="tech-desc">VJ работает в TouchDesigner, генерируя визуал в реальном времени на основе нейросетевых алгоритмов. Контент реагирует на музыку, может включать трансформации текста (имена гостей → Matrix Rain), или отображать в реальном времени данные (публикации гостей в соцсетях, анонимные сообщения из Исповедальни). Sila Sveta, Radugadesign, студия NOISY MACHINES.</p>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">Neon & UV инсталляция</div>
+        <span class="tech-type">Пассивный иммерсив · атмосфера</span>
+        <p class="tech-desc">Флуоресцентные нитевые шторы + UV-прожекторы превращают ширмы Тёмной зоны в светящиеся экраны. При добавлении нанесённых UV-красками символов и текстов (Matrix Code, формулы, цитаты из фильма) эффект усиливается. Низкая стоимость, максимальная атмосфера. Можно комбинировать с любым из выше перечисленных решений.</p>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">Projection Mapping на архитектуру зала</div>
+        <span class="tech-type">Видеомаппинг · трансформация пространства</span>
+        <p class="tech-desc">Мощные проекторы (Christie, Barco) преображают стены, колонны, потолок зала. Во время официальной части — сдержанный корпоративный дизайн. Во время концерта — взрывная визуализация. Технологию используют для совмещения Digital Rain + брендированного контента + абстрактной анимации. Москва: Radugadesign, Immersive Art Studio, Digital October.</p>
+      </div>
+    </div>
+
+    <p><strong>Рекомендуемая связка:</strong> Projection Mapping (основа) + Интерактивный Kinect в Тёмной зоне + Holographic Fan над фуршетным столом. Это даёт три уровня погружения при разумном бюджете.</p>
+  </section>
+
+  <div class="section-divider"><span>детали</span></div>
+
+  <!-- ДЕТАЛИ АТМОСФЕРЫ -->
+  <section class="section">
+    <div class="section-label">06 · Детали атмосферы</div>
+    <h2 class="section-title">Мелочи, которые создают магию</h2>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-name">Два фирменных коктейля</div>
+        <span class="tech-type">Red Pill · Blue Pill</span>
+        <p class="tech-desc"><strong>Red Pill</strong> — Campari, апельсиновый сок, тоник, ягоды. Цвет: алый, прозрачный. <strong>Blue Pill</strong> — Blue Curaçao, лимонный сок, содовая, тоник. Цвет: глубокий синий. Безалкогольные версии обоих. Подаются в одинаковых стаканах — различаются только цветом.</p>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">Сувенирный набор на выходе</div>
+        <span class="tech-type">Branded gifting</span>
+        <p class="tech-desc">Маленькая коробка-«таблетница» с двумя отсеками: в одном — красная (конфета/флешка), в другом — синяя. Открытка с персональным QR-кодом на «пророчество» от AI-Оракула. Карточка с именем гостя, сгенерированная в стиле Matrix.</p>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">Дресс-код: Choose your side</div>
+        <span class="tech-type">Вовлечение до начала</span>
+        <p class="tech-desc">В приглашении: «Добавь к образу один акцент — красный или синий». Это не жёсткий дресс-код, а игровой элемент. Шарф, платок, булавка, аксессуар. На фотозоне снимают «красных» vs «синих» — отличный контент для внутренних коммуникаций.</p>
+      </div>
+
+      <div class="tech-card">
+        <div class="tech-name">Музыкальная программа</div>
+        <span class="tech-type">Зональный звук</span>
+        <p class="tech-desc">Светлая зона: jazz / neo-soul / indie-pop. Тёмная зона: ambient / trip-hop / dark electronics. Концертный блок: рекомендовано приглашение электронного музыканта с живыми инструментами (саксофон + электроника — Parov Stelar формат, либо отечественные аналоги). DJ-set в финале — tech-house или atmospheric electronic.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="border-top: 0.5px solid var(--border-dark); padding-top: 2rem; margin-top: 4rem; text-align: center;">
+    <div style="font-family: 'Unbounded', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 0.5rem;">DUALITY · EVENT CONCEPT</div>
+    <p style="font-size: 11px; color: rgba(100,95,90,0.6); margin-bottom: 0;">Концепция разработана как отправная точка. Все активации, подрядчики и тайминг адаптируются под конкретную компанию, аудиторию и бюджет.</p>
+  </footer>
+
+</div>
+</body>
+</html>
